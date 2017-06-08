@@ -11,8 +11,12 @@ import random
 DEBUG=1
 
 sys.path.append( "myFunctions" )
+sys.path.append( "classes" )
 
 from myFunctions import *
+from blockClass import *
+from addrClass import *
+from transactionClass import *
 
 latestBlockHashAnswer = getLatestBlock()
 if latestBlockHashAnswer[0]+latestBlockHashAnswer[65] != '""': exit
@@ -25,15 +29,21 @@ if latestBlockHashAnswer[0]+latestBlockHashAnswer[65] != '""': exit
 
 if DEBUG != 0: print 'BLOCK HASH ->', latestBlockHashAnswer
 if DEBUG != 0: print '-------------------------------------'
-#
+
 
 
 jsonBlockAnswer=getJsonBlock(latestBlockHashAnswer[1:65])
 
-transNum=0
+myBlock = blockClass()
+myBlock.add(jsonBlockAnswer["hash"], jsonBlockAnswer["prev_block"], jsonBlockAnswer["time"])
 
+myAddr = addrClass()
+myTransaction = transactionClass()
+
+transNum=0
 for transList in jsonBlockAnswer["tx"]:
   if DEBUG != 0: print 'TRANS HASH ->', transList["hash"]
+  if DEBUG != 0: print 'TIME       ->', transList["time"]
   for transInput in transList["inputs"]:
     if transNum==0 :
       transFrom='mine'
@@ -42,15 +52,23 @@ for transList in jsonBlockAnswer["tx"]:
         transFrom=transInput["prev_out"]["addr"]
       except: transFrom='--ERR--'
     if DEBUG != 0: print 'IN ->',transFrom
+    myAddr.add(transFrom)
 
   for transOut in transList["out"]:
     try:
       transTo=transOut["addr"]
       if DEBUG != 0: print 'OUT ->',transTo
+      myAddr.add(transFrom)
     except: transTo='--ERR--'
-    val=transOut["value"]
-    if DEBUG != 0: print 'VAL ->',val
+    transVal=transOut["value"]
+    transSpent=transOut["spent"]
+    if DEBUG != 0: print 'VAL ->',transVal
 
   transNum=transNum+1
+  myTransaction.add(transList["hash"], transFrom, transTo, transVal, transSpent, transList["time"])
   if DEBUG != 0: print '--------------------'
+
+if DEBUG != 0: print myAddr.addrList
+if DEBUG != 0: print myBlock.blockList
+if DEBUG != 0: print myTransaction.transactionList
 if DEBUG != 0: print "That's all folks!"
