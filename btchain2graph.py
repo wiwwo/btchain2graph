@@ -8,7 +8,7 @@ import time, datetime
 import gzip, sys, os, getopt
 import random
 
-DEBUG=0
+DEBUG=1
 
 latestBlockUrl="https://blockchain.info/latestblock"
 rawBlockUrl="https://blockchain.info/rawblock/"
@@ -25,7 +25,7 @@ if latestBlockHashAnswer[0]+latestBlockHashAnswer[65] != '""': exit
 #latestBlockHashAnswer = '"000000000002864e1165d5da2b9cf69512e96171f5d94c2ab1007c9a7933390b"'
 latestBlockHashAnswer = '"0000000000000000013b476cf8af07a136c0cffd86ed6e268f5e6d4b02e4604f"'
 
-if DEBUG != 0: printMe( 'BLOCK HASH ->', latestBlockHashAnswer )
+if DEBUG != 0: print 'BLOCK HASH ->', latestBlockHashAnswer
 if DEBUG != 0: print '-------------------------------------'
 #
 response = urllib2.urlopen(rawBlockUrl+latestBlockHashAnswer[1:65])
