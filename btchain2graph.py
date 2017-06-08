@@ -10,28 +10,25 @@ import random
 
 DEBUG=1
 
-latestBlockUrl="https://blockchain.info/latestblock"
-rawBlockUrl="https://blockchain.info/rawblock/"
+sys.path.append( "myFunctions" )
 
-# Get latest block
-response = urllib2.urlopen(latestBlockUrl)
-# TODO - This sucks, but "Need for Speed"
-latestBlockHashAnswer = response.read()[15:81]
+from myFunctions import *
+
+latestBlockHashAnswer = getLatestBlock()
 if latestBlockHashAnswer[0]+latestBlockHashAnswer[65] != '""': exit
 
 # TODO - DEBUG
 #latestBlockHashAnswer = '"00000000000107925a52e24c838788a954d1a6d5858301c66d50b2a074787460"'
 #latestBlockHashAnswer = '"00000000000304d51de00dc9c22b439030160b615303f0978d0e5ebc14c643b3"'
 #latestBlockHashAnswer = '"000000000002864e1165d5da2b9cf69512e96171f5d94c2ab1007c9a7933390b"'
-latestBlockHashAnswer = '"0000000000000000013b476cf8af07a136c0cffd86ed6e268f5e6d4b02e4604f"'
+#latestBlockHashAnswer = '"0000000000000000013b476cf8af07a136c0cffd86ed6e268f5e6d4b02e4604f"'
 
 if DEBUG != 0: print 'BLOCK HASH ->', latestBlockHashAnswer
 if DEBUG != 0: print '-------------------------------------'
 #
-response = urllib2.urlopen(rawBlockUrl+latestBlockHashAnswer[1:65])
-rawBlockAnswer = response.read()
 
-jsonBlockAnswer=json.loads(rawBlockAnswer)
+
+jsonBlockAnswer=getJsonBlock(latestBlockHashAnswer[1:65])
 
 transNum=0
 
