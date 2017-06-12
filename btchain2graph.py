@@ -43,7 +43,6 @@ for thisBlock in range (0, loopDeep):
   else:               latestBlockHashAnswer = getBlock(jsonBlockAnswer["prev_block"])
   if latestBlockHashAnswer[0]+latestBlockHashAnswer[65] != '""': exit
   logger.debug ('BLOCK HASH ->', latestBlockHashAnswer)
-  logger.debug ('-------------------------------------')
 
   jsonBlockAnswer=getJsonBlock(latestBlockHashAnswer[1:65])
 
