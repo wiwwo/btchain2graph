@@ -2,7 +2,7 @@
 
 import logging
 
-import requests, json, urllib2
+import requests, json, urllib2, csv
 import time, datetime
 import gzip, sys, os, getopt
 import random
@@ -64,8 +64,26 @@ for thisBlock in range (0, loopDeep):
     if DEBUG != 0: print '--------------------'
 
 
-print myAddr.addrList
-print myBlock.blockList
-print myTransaction.transactionList
+#print myAddr.addrList
+#print myBlock.blockList
+#print myTransaction.transactionList
+
+with open('addresses.csv', 'wb') as myfile:
+    wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+    wr.writerow(myAddr.header)
+    for row in myAddr.addrList:
+      wr.writerow(row.values())
+
+with open('block.csv', 'wb') as myfile:
+    wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+    wr.writerow(myBlock.header)
+    for row in myBlock.blockList:
+      wr.writerow(row.values())
+
+with open('transactions.csv', 'wb') as myfile:
+    wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+    wr.writerow(myTransaction.header)
+    for row in myTransaction.transactionList:
+      wr.writerow(row.values())
 
 print "That's all folks!"
