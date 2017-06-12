@@ -8,7 +8,22 @@ import gzip, sys, os, getopt
 import random
 
 DEBUG=0
-loopDeep=55
+
+logger = logging.getLogger('')
+logger.setLevel(logging.INFO)
+format = logging.Formatter("%(asctime)s [%(relativeCreated)12d] - %(message)s")
+
+argv0=os.path.basename(sys.argv[0 ])
+ch = logging.StreamHandler(sys.stdout)
+ch2 = logging.FileHandler('log/'+datetime.datetime.utcnow().strftime('%Y%m%d%H%M%S')+'_'+argv0+'.log')
+ch.setFormatter(format)
+ch2.setFormatter(format)
+logger.addHandler(ch)
+logger.addHandler(ch2)
+
+logger.info('Hello you!')
+
+loopDeep=2
 
 sys.path.append( "functions" )
 sys.path.append( "classes" )
@@ -25,6 +40,7 @@ myTransaction = transactionClass()
 
 
 for thisBlock in range (0, loopDeep):
+  logger.info('Starting new block')
   if thisBlock == 0:  latestBlockHashAnswer = getLatestBlock()
   else:               latestBlockHashAnswer = getBlock(jsonBlockAnswer["prev_block"])
   if latestBlockHashAnswer[0]+latestBlockHashAnswer[65] != '""': exit
@@ -63,27 +79,13 @@ for thisBlock in range (0, loopDeep):
     myTransaction.add(transList["hash"], transFrom, transTo, transVal, transSpent, transList["time"])
     if DEBUG != 0: print '--------------------'
 
-
-#print myAddr.addrList
-#print myBlock.blockList
-#print myTransaction.transactionList
-
-with gzip.open('addresses.csv.gz', 'wb') as myfile:
+for thisFileName, thisCollection in [('addresses',myAddr),('block',myBlock),('transactions',myTransaction)]:
+  print thisFileName, thisCollection
+  with gzip.open('output/'+thisFileName+'.csv.gz', 'wb') as myfile:
+    logger.info('Now spooling '+thisFileName+'.csv.gz')
     wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
-    wr.writerow(myAddr.header)
-    for row in myAddr.elemList:
+    wr.writerow(thisCollection.header)
+    for row in thisCollection.elemList:
       wr.writerow(row.values())
 
-with gzip.open('block.csv.gz', 'wb') as myfile:
-    wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
-    wr.writerow(myBlock.header)
-    for row in myBlock.elemList:
-      wr.writerow(row.values())
-
-with gzip.open('transactions.csv.gz', 'wb') as myfile:
-    wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
-    wr.writerow(myTransaction.header)
-    for row in myTransaction.elemList:
-      wr.writerow(row.values())
-
-print "That's all folks!"
+logger.info("That's all folks!")
