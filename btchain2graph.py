@@ -21,7 +21,13 @@ logger.addHandler(ch2)
 
 logger.info('Hello you!')
 
-loopDeep=20
+try:
+  logger.debug ('Depth by param')
+  loopDeep=int(sys.argv[1])
+except:
+  logger.debug ('Depth by default')
+  loopDeep=5
+logger.info ('Depth: '+str(loopDeep))
 
 sys.path.append( "functions" )
 sys.path.append( "classes" )
