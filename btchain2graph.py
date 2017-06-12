@@ -7,8 +7,6 @@ import time, datetime
 import gzip, sys, os, getopt
 import random
 
-DEBUG=0
-
 logger = logging.getLogger('')
 logger.setLevel(logging.INFO)
 format = logging.Formatter("%(asctime)s [%(relativeCreated)12d] - %(message)s")
@@ -44,8 +42,8 @@ for thisBlock in range (0, loopDeep):
   if thisBlock == 0:  latestBlockHashAnswer = getLatestBlock()
   else:               latestBlockHashAnswer = getBlock(jsonBlockAnswer["prev_block"])
   if latestBlockHashAnswer[0]+latestBlockHashAnswer[65] != '""': exit
-  if DEBUG != 0: print 'BLOCK HASH ->', latestBlockHashAnswer
-  if DEBUG != 0: print '-------------------------------------'
+  logger.debug ('BLOCK HASH ->', latestBlockHashAnswer)
+  logger.debug ('-------------------------------------')
 
   jsonBlockAnswer=getJsonBlock(latestBlockHashAnswer[1:65])
 
@@ -53,8 +51,8 @@ for thisBlock in range (0, loopDeep):
 
   transNum=0
   for transList in jsonBlockAnswer["tx"]:
-    if DEBUG != 0: print 'TRANS HASH ->', transList["hash"]
-    if DEBUG != 0: print 'TIME       ->', transList["time"]
+    logger.debug ('TRANS HASH ->', transList["hash"])
+    logger.debug ('TIME       ->', transList["time"])
     for transInput in transList["inputs"]:
       if transNum==0 :
         transFrom='mine'
@@ -62,25 +60,25 @@ for thisBlock in range (0, loopDeep):
         try:
           transFrom=transInput["prev_out"]["addr"]
         except: transFrom='--ERR--'
-      if DEBUG != 0: print 'IN ->',transFrom
+      logger.debug ('IN ->',transFrom)
       myAddr.add(transFrom)
 
     for transOut in transList["out"]:
       try:
         transTo=transOut["addr"]
-        if DEBUG != 0: print 'OUT ->',transTo
-        myAddr.add(transFrom)
+        logger.debug ('OUT ->',transTo)
+        myAddr.add(transTo)
       except: transTo='--ERR--'
       transVal=transOut["value"]
       transSpent=transOut["spent"]
-      if DEBUG != 0: print 'VAL ->',transVal
+      logger.debug ('VAL ->',transVal)
 
     transNum=transNum+1
     myTransaction.add(transList["hash"], transFrom, transTo, transVal, transSpent, transList["time"])
-    if DEBUG != 0: print '--------------------'
+    logger.debug ('--------------------')
 
 for thisFileName, thisCollection in [('addresses',myAddr),('block',myBlock),('transactions',myTransaction)]:
-  print thisFileName, thisCollection
+
   with gzip.open('output/'+thisFileName+'.csv.gz', 'wb') as myfile:
     logger.info('Now spooling '+thisFileName+'.csv.gz')
     wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
