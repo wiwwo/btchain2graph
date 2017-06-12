@@ -23,7 +23,7 @@ logger.addHandler(ch2)
 
 logger.info('Hello you!')
 
-loopDeep=2
+loopDeep=20
 
 sys.path.append( "functions" )
 sys.path.append( "classes" )
