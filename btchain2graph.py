@@ -10,7 +10,7 @@ import random
 DEBUG=0
 loopDeep=3
 
-sys.path.append( "myFunctions" )
+sys.path.append( "functions" )
 sys.path.append( "classes" )
 
 from myFunctions import *
@@ -67,4 +67,5 @@ for thisBlock in range (0, loopDeep):
 print myAddr.addrList
 print myBlock.blockList
 print myTransaction.transactionList
+
 print "That's all folks!"

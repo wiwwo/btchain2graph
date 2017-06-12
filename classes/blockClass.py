@@ -1,7 +1,7 @@
 class blockClass:
 
   def __init__(self):
-    self.blockList = [{}]
+    self.blockList = []
 
     self.header = []
     self.header.append('hash')

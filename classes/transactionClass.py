@@ -1,7 +1,7 @@
 class transactionClass:
 
   def __init__(self):
-    self.transactionList = [{}]
+    self.transactionList = []
 
     self.header = []
     self.header.append('hash')

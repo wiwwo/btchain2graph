@@ -1,7 +1,7 @@
 class addrClass:
 
   def __init__(self):
-    self.addrList = [{}]
+    self.addrList = []
 
     self.header = []
     self.header.append('hash')
