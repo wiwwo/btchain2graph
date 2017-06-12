@@ -8,7 +8,7 @@ import gzip, sys, os, getopt
 import random
 
 DEBUG=0
-loopDeep=5
+loopDeep=55
 
 sys.path.append( "functions" )
 sys.path.append( "classes" )
@@ -68,19 +68,19 @@ for thisBlock in range (0, loopDeep):
 #print myBlock.blockList
 #print myTransaction.transactionList
 
-with open('addresses.csv', 'wb') as myfile:
+with gzip.open('addresses.csv.gz', 'wb') as myfile:
     wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
     wr.writerow(myAddr.header)
     for row in myAddr.elemList:
       wr.writerow(row.values())
 
-with open('block.csv', 'wb') as myfile:
+with gzip.open('block.csv.gz', 'wb') as myfile:
     wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
     wr.writerow(myBlock.header)
     for row in myBlock.elemList:
       wr.writerow(row.values())
 
-with open('transactions.csv', 'wb') as myfile:
+with gzip.open('transactions.csv.gz', 'wb') as myfile:
     wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
     wr.writerow(myTransaction.header)
     for row in myTransaction.elemList:
