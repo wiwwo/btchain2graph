@@ -54,16 +54,17 @@ for thisBlock in range (0, loopDeep):
   if thisBlock == 0:  latestBlockHashAnswer = getLatestBlock()
   else:               latestBlockHashAnswer = getBlock(jsonBlockAnswer["prev_block"])
   if latestBlockHashAnswer[0]+latestBlockHashAnswer[65] != '""': exit
-  logger.debug ('BLOCK HASH ->', latestBlockHashAnswer)
+  logger.debug ('BLOCK HASH -> '+latestBlockHashAnswer)
 
   jsonBlockAnswer=getJsonBlock(latestBlockHashAnswer[1:65])
 
+  logger.debug ('PREV BLOCK HASH -> '+jsonBlockAnswer["prev_block"])
   myBlock.add(jsonBlockAnswer["hash"], jsonBlockAnswer["prev_block"], jsonBlockAnswer["time"])
 
   transNum=0
   for transList in jsonBlockAnswer["tx"]:
-    logger.debug ('TRANS HASH ->', transList["hash"])
-    logger.debug ('TIME       ->', transList["time"])
+    logger.debug ('TRANS HASH -> '+ transList["hash"])
+    logger.debug ('TIME -> '+ str(transList["time"]))
     for transInput in transList["inputs"]:
       if transNum==0 :
         transFrom='mine'
@@ -71,21 +72,21 @@ for thisBlock in range (0, loopDeep):
         try:
           transFrom=transInput["prev_out"]["addr"]
         except: transFrom='--ERR--'
-      logger.debug ('IN ->',transFrom)
+      logger.debug ('IN -> '+transFrom)
       myAddr.add(transFrom)
 
     for transOut in transList["out"]:
       try:
         transTo=transOut["addr"]
-        logger.debug ('OUT ->',transTo)
+        logger.debug ('OUT -> '+str(transTo))
         myAddr.add(transTo)
       except: transTo='--ERR--'
       transVal=transOut["value"]
       transSpent=transOut["spent"]
-      logger.debug ('VAL ->',transVal)
+      logger.debug ('VAL -> '+str(transVal))
 
     transNum=transNum+1
-    myTransaction.add(transList["hash"], transFrom, transTo, transVal, transSpent, transList["time"])
+    myTransaction.add(transFrom, transTo, transList["hash"], transVal, transSpent, transList["time"])
     logger.debug ('--------------------')
   if jsonBlockAnswer["prev_block"] == '0000000000000000000000000000000000000000000000000000000000000000':
     logger.info('Reached GENESIS block')
@@ -97,7 +98,7 @@ for thisFileName, thisCollection in fileWriteList:
   with gzip.open('output/'+thisFileName+'.csv.gz', 'wb') as myfile:
     logger.info('Now spooling '+thisFileName+'.csv.gz')
     wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
-    wr.writerow(thisCollection.header)
+    wr.writerow(thisCollection.elemList[0].keys())
     for row in thisCollection.elemList:
       wr.writerow(row.values())
     myfile.close()
