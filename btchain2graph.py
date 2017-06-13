@@ -42,9 +42,10 @@ myBlock = blockClass()
 myAddr = addrClass()
 myTransaction = transactionClass()
 
-
+soFar=0
 for thisBlock in range (0, loopDeep):
-  logger.info('Starting new block')
+  soFar=soFar+1
+  logger.info('Starting block '+str(soFar)+'/'+str(loopDeep))
   if thisBlock == 0:  latestBlockHashAnswer = getLatestBlock()
   else:               latestBlockHashAnswer = getBlock(jsonBlockAnswer["prev_block"])
   if latestBlockHashAnswer[0]+latestBlockHashAnswer[65] != '""': exit
