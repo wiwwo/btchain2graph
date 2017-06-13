@@ -82,6 +82,9 @@ for thisBlock in range (0, loopDeep):
     transNum=transNum+1
     myTransaction.add(transList["hash"], transFrom, transTo, transVal, transSpent, transList["time"])
     logger.debug ('--------------------')
+  if jsonBlockAnswer["prev_block"] == '0000000000000000000000000000000000000000000000000000000000000000':
+    logger.info('Reached GENESIS block')
+    break
 
 for thisFileName, thisCollection in [('addresses',myAddr),('block',myBlock),('transactions',myTransaction)]:
 
