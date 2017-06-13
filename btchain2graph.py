@@ -42,6 +42,11 @@ myBlock = blockClass()
 myAddr = addrClass()
 myTransaction = transactionClass()
 
+fileWriteList=[('addresses',myAddr),('block',myBlock),('transactions',myTransaction)]
+
+for thisFileName, thisCollection in fileWriteList:
+  with gzip.open('output/'+thisFileName+'.csv.gz', 'wb') as myfile: myfile.close()
+
 soFar=0
 for thisBlock in range (0, loopDeep):
   soFar=soFar+1
@@ -86,7 +91,8 @@ for thisBlock in range (0, loopDeep):
     logger.info('Reached GENESIS block')
     break
 
-for thisFileName, thisCollection in [('addresses',myAddr),('block',myBlock),('transactions',myTransaction)]:
+
+for thisFileName, thisCollection in fileWriteList:
 
   with gzip.open('output/'+thisFileName+'.csv.gz', 'wb') as myfile:
     logger.info('Now spooling '+thisFileName+'.csv.gz')
@@ -94,5 +100,6 @@ for thisFileName, thisCollection in [('addresses',myAddr),('block',myBlock),('tr
     wr.writerow(thisCollection.header)
     for row in thisCollection.elemList:
       wr.writerow(row.values())
+    myfile.close()
 
 logger.info("That's all folks!")
