@@ -67,7 +67,7 @@ for thisBlock in range (0, loopDeep):
     logger.debug ('TIME -> '+ str(transList["time"]))
     for transInput in transList["inputs"]:
       if transNum==0 :
-        transFrom='mine'
+        transFrom='miner'
       else:
         try:
           transFrom=transInput["prev_out"]["addr"]
