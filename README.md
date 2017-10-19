@@ -5,7 +5,7 @@ Blockchain is nothing more than list of "From A to B, amount N" list.
 <br>This is what this code is for.
 
 ## How to run
-Code start from the latest block, returned by [getLatestBlock()] (https://github.com/wiwwo/btchain2graph/blob/d9848d7dcb0f3d51d0e4a34b27715bd398301645/functions/myFunctions.py#L7)
+Code start from the latest block, returned by [getLatestBlock\(\)](https://github.com/wiwwo/btchain2graph/blob/d9848d7dcb0f3d51d0e4a34b27715bd398301645/functions/myFunctions.py#L7)
 <br>The parameter is an integer telling code how many blocks in the past you want to dig.
 <br>Code execution sample:
 ```
