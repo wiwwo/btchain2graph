@@ -27,7 +27,7 @@ Log files in `log` directory.
 Output files are gemerated to be quickly and easly imported in neo4j.
 <br>Code procudes 3 files:
 
-### Addresses.csv.gz
+### addresses.csv.gz
 Contains Addressed list (nodes in graph DB)
 ```
 $ zcat addresses.csv.gz | head -5
