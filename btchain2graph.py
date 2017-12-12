@@ -38,7 +38,6 @@ from addrClass import *
 from transactionClass import *
 from blockChainClass import *
 
-
 myBlock = blockClass()
 myAddr = addrClass()
 myTransaction = transactionClass()
@@ -46,30 +45,37 @@ myBlockChain = blockChainClass()
 
 fileWriteList=[('addresses',myAddr),('block',myBlock),('transactions',myTransaction),('blockchain',myBlockChain)]
 
+# I open files here, so in case something is locking them, i won't waste elaboration
+# that will eventually break
 for thisFileName, thisCollection in fileWriteList:
   with gzip.open('output/'+thisFileName+'.csv.gz', 'wb') as myfile: myfile.close()
 
+
 soFar=0
+latestBlockHash = getLatestBlock()
+
 for thisBlock in range (0, loopDeep):
   soFar=soFar+1
   logger.info('Starting block '+str(soFar)+'/'+str(loopDeep))
 
-  if thisBlock == 0:
-    latestBlockHash = getLatestBlock()
-    latestBlockHashAnswer = getBlock(latestBlockHash)
-  else:
-    latestBlockHashAnswer = getBlock(jsonBlockAnswer["prev_block"])
-
+  latestBlockHashAnswer = getBlock(latestBlockHash)
   jsonBlockAnswer=getJsonBlock(latestBlockHashAnswer)
 
   logger.debug ('BLOCK HASH -> '+latestBlockHashAnswer)
   logger.debug ('PREV BLOCK HASH -> '+jsonBlockAnswer["prev_block"])
 
+  # BLOCK node handling
   myBlock.add(jsonBlockAnswer["hash"], jsonBlockAnswer["time"])
+
+  # Not to loose last elaborated blockTo for blockChain relation
   if thisBlock == (loopDeep-1):
     myBlock.add(jsonBlockAnswer["prev_block"], 0)
+
+  # BLOCKCHAIN relations handling
   myBlockChain.add(p_blockFrom = jsonBlockAnswer["hash"], p_blockTo = jsonBlockAnswer["prev_block"])
 
+
+  # TRANSACTION node handling
   transNum=0
   for transList in jsonBlockAnswer["tx"]:
     logger.debug ('TRANS HASH -> '+ transList["hash"])
@@ -97,16 +103,23 @@ for thisBlock in range (0, loopDeep):
     transNum=transNum+1
     myTransaction.add(transFrom, transTo, transList["hash"], transVal, transSpent, transList["time"])
     logger.debug ('--------------------')
+
+  # Check if reached genesis block
   if jsonBlockAnswer["prev_block"] == '0000000000000000000000000000000000000000000000000000000000000000':
     logger.info('Reached GENESIS block')
 
-    # In this case, i added it before already...
+    # Check if i added genesis block before...
     if thisBlock != (loopDeep-1):
       myBlock.add(jsonBlockAnswer["prev_block"], 0)
 
+    # Nothing before Genesis
     break
 
+  # Alro giro, altra corsa
+  latestBlockHash = jsonBlockAnswer["prev_block"]
 
+
+# Write it down now! :-)
 for thisFileName, thisCollection in fileWriteList:
 
   with gzip.open('output/'+thisFileName+'.csv.gz', 'wb') as myfile:
@@ -116,5 +129,6 @@ for thisFileName, thisCollection in fileWriteList:
     for row in thisCollection.elemList:
       wr.writerow(row.values())
     myfile.close()
+
 
 logger.info("That's all folks!")
