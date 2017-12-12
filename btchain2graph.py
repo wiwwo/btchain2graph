@@ -139,7 +139,7 @@ for thisFileName, thisCollection in fileWriteList:
   with gzip.open('output/'+thisFileName+'.csv.gz', appendFlag+'b') as myfile:
     logger.info('Now spooling '+thisFileName+'.csv.gz')
     wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
-    if appendFlag!= 'w': wr.writerow(thisCollection.elemList[0].keys())
+    if appendFlag == 'w': wr.writerow(thisCollection.elemList[0].keys())
     for row in thisCollection.elemList:
       wr.writerow(row.values())
     myfile.close()
