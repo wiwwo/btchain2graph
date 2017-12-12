@@ -49,7 +49,7 @@ if [ -s $DB_DIR/$TEMP_DB_NAME/bad.log ]; then
    exit 20
 fi
 
-export timeTaken=`tail -5 $IMP_LOG_FILE | grep "IMPORT DONE" | cut -d "." -f 1 | cut -d " " -f 4,5,6,7,8,9,10`
+export timeTaken=`tail -7 $IMP_LOG_FILE | grep "IMPORT DONE" | cut -d "." -f 1 | cut -d " " -f 4,5,6,7,8,9,10`
 export nodesLoaded=`tail -5 $IMP_LOG_FILE | grep "nodes" | cut -d " " -f 3`
 export relsLoaded=`tail -5 $IMP_LOG_FILE | grep "relationships" |  cut -d " " -f 3`
 export propsLoaded=`tail -5 $IMP_LOG_FILE | grep "properties" |  cut -d " " -f 3`
