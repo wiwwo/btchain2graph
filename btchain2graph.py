@@ -44,7 +44,7 @@ myAddr = addrClass()
 myTransaction = transactionClass()
 myBlockChain = blockChainClass()
 
-fileWriteList=[('addresses',myAddr),('blocks',myBlock),('transactions',myTransaction),('blockchain',myBlockChain)]
+fileWriteList=[('addresses_nodes',myAddr),('blocks_nodes',myBlock),('transactions_rels',myTransaction),('blockchain_rels',myBlockChain)]
 
 # I open files here, so in case something is locking them, i won't waste elaboration
 # that will eventually break
