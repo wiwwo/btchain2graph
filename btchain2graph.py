@@ -56,6 +56,9 @@ fileWriteList=[('addresses_nodes',myAddr),('blocks_nodes',myBlock),('transaction
 # I open files here, so in case something is locking them, i won't waste elaboration
 # that will eventually break
 for thisFileName, thisCollection in fileWriteList:
+  # Header files
+  with open('output/'+thisFileName+'.csv.header', 'w') as myfile: myfile.close()
+  # Data files
   with gzip.open('output/'+thisFileName+'.csv.gz', appendFlag+'b') as myfile: myfile.close()
 
 
@@ -136,10 +139,16 @@ for thisBlock in range (0, loopDeep):
 # Write it down now! :-)
 for thisFileName, thisCollection in fileWriteList:
 
+  # Header files
+  with open('output/'+thisFileName+'.csv.header', 'w') as myfile:
+    wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+    wr.writerow(thisCollection.elemList[0].keys())
+
+  # Data files
   with gzip.open('output/'+thisFileName+'.csv.gz', appendFlag+'b') as myfile:
     logger.info('Now spooling '+thisFileName+'.csv.gz')
     wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
-    if appendFlag == 'w': wr.writerow(thisCollection.elemList[0].keys())
+    #if appendFlag == 'w': wr.writerow(thisCollection.elemList[0].keys())
     for row in thisCollection.elemList:
       wr.writerow(row.values())
     myfile.close()

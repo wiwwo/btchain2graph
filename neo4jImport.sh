@@ -19,14 +19,18 @@ export NEO4J_LOG_FILE=/var/log/neo4j/debug.log
 IMPORT_PARAMS=" --id-type string --skip-bad-relationships=false "
 executeMe="sudo neo4j-import --into $DB_DEST_DIR $IMPORT_PARAMS "
 
+
 for myFile in $DB_SOURCE_DIR/*_nodes.csv.gz
 do
-  executeMe="$executeMe --nodes $myFile"
+  myHeaderfile=`echo ${myFile/.gz/.header}`
+  echo $myHeaderfile
+  executeMe="$executeMe --nodes $myHeaderfile,$myFile"
 done
 
 for myFile in $DB_SOURCE_DIR/*_rels.csv.gz
 do
-  executeMe="$executeMe --relationships $myFile"
+  myHeaderfile=`echo "${myFile/.gz/.header}"`
+  executeMe="$executeMe --relationships $myHeaderfile,$myFile"
 done
 
 nodeFilesCnt=`ls $DB_SOURCE_DIR/*_nodes.csv.gz | wc -l`
