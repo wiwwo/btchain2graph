@@ -8,10 +8,11 @@ def getLatestBlock():
   latestBlockUrl="https://blockchain.info/latestblock"
 
   response = urllib2.urlopen(latestBlockUrl)
-  # TODO - This sucks, but "Need for Speed"
-  #return '"00000000000107925a52e24c838788a954d1a6d5858301c66d50b2a074787460"'
-  #return '"000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f"'
-  return response.read()[15:81]
+  return '00000000000107925a52e24c838788a954d1a6d5858301c66d50b2a074787460'
+  #return '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
+  rawBlockAnswer = response.read()
+  print json.loads(rawBlockAnswer)["hash"]
+  return json.loads(rawBlockAnswer)["hash"]
 
 
 ####################################################################
@@ -29,5 +30,5 @@ def getBlock(p_blockHash):
   blockUrl="https://blockchain.info/rawblock/"
 
   response = urllib2.urlopen(blockUrl+p_blockHash)
-  # TODO - This sucks, but "Need for Speed"
-  return response.read()[15:81]
+  rawBlockAnswer = response.read()
+  return json.loads(rawBlockAnswer)["hash"]

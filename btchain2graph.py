@@ -36,13 +36,15 @@ from myFunctions import *
 from blockClass import *
 from addrClass import *
 from transactionClass import *
+from blockChainClass import *
 
 
 myBlock = blockClass()
 myAddr = addrClass()
 myTransaction = transactionClass()
+myBlockChain = blockChainClass()
 
-fileWriteList=[('addresses',myAddr),('block',myBlock),('transactions',myTransaction)]
+fileWriteList=[('addresses',myAddr),('block',myBlock),('transactions',myTransaction),('blockchain',myBlockChain)]
 
 for thisFileName, thisCollection in fileWriteList:
   with gzip.open('output/'+thisFileName+'.csv.gz', 'wb') as myfile: myfile.close()
@@ -51,15 +53,21 @@ soFar=0
 for thisBlock in range (0, loopDeep):
   soFar=soFar+1
   logger.info('Starting block '+str(soFar)+'/'+str(loopDeep))
-  if thisBlock == 0:  latestBlockHashAnswer = getLatestBlock()
-  else:               latestBlockHashAnswer = getBlock(jsonBlockAnswer["prev_block"])
-  if latestBlockHashAnswer[0]+latestBlockHashAnswer[65] != '""': exit
+
+  if thisBlock == 0:
+    latestBlockHash = getLatestBlock()
+    latestBlockHashAnswer = getBlock(latestBlockHash)
+  else:
+    latestBlockHashAnswer = getBlock(jsonBlockAnswer["prev_block"])
+
+  jsonBlockAnswer=getJsonBlock(latestBlockHashAnswer)
+
   logger.debug ('BLOCK HASH -> '+latestBlockHashAnswer)
-
-  jsonBlockAnswer=getJsonBlock(latestBlockHashAnswer[1:65])
-
   logger.debug ('PREV BLOCK HASH -> '+jsonBlockAnswer["prev_block"])
-  myBlock.add(jsonBlockAnswer["hash"], jsonBlockAnswer["prev_block"], jsonBlockAnswer["time"])
+
+  myBlock.add(jsonBlockAnswer["hash"], jsonBlockAnswer["time"])
+  if thisBlock == (loopDeep-1): myBlock.add(jsonBlockAnswer["prev_block"], 0)
+  myBlockChain.add(p_blockFrom = jsonBlockAnswer["hash"], p_blockTo = jsonBlockAnswer["prev_block"])
 
   transNum=0
   for transList in jsonBlockAnswer["tx"]:
