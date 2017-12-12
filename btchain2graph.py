@@ -58,10 +58,9 @@ for thisBlock in range (0, loopDeep):
   soFar=soFar+1
   logger.info('Starting block '+str(soFar)+'/'+str(loopDeep))
 
-  latestBlockHashAnswer = getBlock(latestBlockHash)
-  jsonBlockAnswer=getJsonBlock(latestBlockHashAnswer)
+  jsonBlockAnswer=getJsonBlock(latestBlockHash)
 
-  logger.debug ('BLOCK HASH -> '+latestBlockHashAnswer)
+  logger.debug ('BLOCK HASH -> '+jsonBlockAnswer["hash"])
   logger.debug ('PREV BLOCK HASH -> '+jsonBlockAnswer["prev_block"])
 
   # BLOCK node handling
