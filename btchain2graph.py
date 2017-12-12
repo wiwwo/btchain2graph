@@ -28,6 +28,7 @@ except:
   logger.debug ('Depth by default')
   loopDeep=5
 logger.info ('Depth: '+str(loopDeep))
+if loopDeep < 0: logger.info ('Going from genesis onwards!')
 
 sys.path.append( "functions" )
 sys.path.append( "classes" )
@@ -52,7 +53,14 @@ for thisFileName, thisCollection in fileWriteList:
 
 
 soFar=0
-latestBlockHash = getLatestBlock()
+
+# Negative depth meand "from genesis forward"
+if loopDeep > 0:
+  latestBlockHash = getLatestBlock()
+else:
+  loopDeep = abs(loopDeep)
+  latestBlockHash = getOldestBlock(loopDeep-1)
+
 
 for thisBlock in range (0, loopDeep):
   soFar=soFar+1

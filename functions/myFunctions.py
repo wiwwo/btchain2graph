@@ -23,3 +23,11 @@ def getJsonBlock(p_block):
 
   return json.loads(rawBlockAnswer)
 
+
+####################################################################
+def getOldestBlock(p_steps):
+  blockUrl="https://blockchain.info/block-height/"+ str(p_steps) +"?format=json"
+
+  response = urllib2.urlopen(blockUrl)
+  rawBlockAnswer = response.read()
+  return json.loads(rawBlockAnswer)["blocks"][0]["hash"]
