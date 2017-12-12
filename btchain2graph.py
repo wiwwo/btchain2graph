@@ -108,7 +108,7 @@ for thisBlock in range (0, loopDeep):
       logger.debug ('VAL -> '+str(transVal))
 
     transNum=transNum+1
-    myTransaction.add(transFrom, transTo, transList["hash"], transVal, transSpent, transList["time"])
+    myTransaction.add(transFrom, transTo, transList["hash"], transVal, transSpent, jsonBlockAnswer["hash"], transList["time"])
     logger.debug ('--------------------')
 
   # Check if reached genesis block
