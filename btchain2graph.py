@@ -66,7 +66,8 @@ for thisBlock in range (0, loopDeep):
   logger.debug ('PREV BLOCK HASH -> '+jsonBlockAnswer["prev_block"])
 
   myBlock.add(jsonBlockAnswer["hash"], jsonBlockAnswer["time"])
-  if thisBlock == (loopDeep-1): myBlock.add(jsonBlockAnswer["prev_block"], 0)
+  if thisBlock == (loopDeep-1):
+    myBlock.add(jsonBlockAnswer["prev_block"], 0)
   myBlockChain.add(p_blockFrom = jsonBlockAnswer["hash"], p_blockTo = jsonBlockAnswer["prev_block"])
 
   transNum=0
@@ -98,6 +99,11 @@ for thisBlock in range (0, loopDeep):
     logger.debug ('--------------------')
   if jsonBlockAnswer["prev_block"] == '0000000000000000000000000000000000000000000000000000000000000000':
     logger.info('Reached GENESIS block')
+
+    # In this case, i added it before already...
+    if thisBlock != (loopDeep-1):
+      myBlock.add(jsonBlockAnswer["prev_block"], 0)
+
     break
 
 
