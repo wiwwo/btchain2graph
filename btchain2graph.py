@@ -98,6 +98,8 @@ for thisBlock in range (0, loopDeep):
 
 
   # TRANSACTION node handling
+  # Default address for exceptions
+  myAddr.add('--ERR--')
   transNum=0
   for transList in jsonBlockAnswer["tx"]:
     logger.debug ('TRANS HASH -> '+ transList["hash"])
@@ -108,9 +110,10 @@ for thisBlock in range (0, loopDeep):
       else:
         try:
           transFrom=transInput["prev_out"]["addr"]
+          myAddr.add(transFrom)
         except: transFrom='--ERR--'
       logger.debug ('IN -> '+transFrom)
-      myAddr.add(transFrom)
+
 
     for transOut in transList["out"]:
       try:
