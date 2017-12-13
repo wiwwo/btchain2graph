@@ -68,11 +68,14 @@ def main(argv):
   soFar=0
   spooledCounter = 0
   headerPrinted = 0
+
   for thisHeight in range (startHeight, endHeight+1):
     soFar=soFar+1
     spooledCounter=spooledCounter+1
 
-    myGlobals.logger.info('Going for height ' +str(thisHeight)+ ' - '+str(soFar)+'/'+str(endHeight-startHeight+1))
+    strLenTotal=len(str(endHeight-startHeight+1))
+    myGlobals.logger.info('Going for height %07d - %0'+str(strLenTotal)+'d/%0'+str(strLenTotal)+'d', thisHeight, soFar, endHeight-startHeight+1)
+
     blockHash = blockHandling.getBlockByHeight(thisHeight)
     blockHandling.handleBlock (blockHash)
 
@@ -111,16 +114,6 @@ def main(argv):
     for row in thisCollection.elemList:
       wr.writerow(row.values())
     thisCollection.elemList=[]
-
-
-
-
-
-
-
-
-
-
 
 
 
