@@ -20,7 +20,7 @@ import myGlobals, myLogger
 ####################################################################
 def handleBlock (p_block):
 
-  myGlobals.logger.info('Starting block ' + p_block)
+  myGlobals.logger.debug('Starting block ' + p_block)
 
   jsonBlockAnswer=getJsonBlock(p_block)
 
