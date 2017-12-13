@@ -1,173 +1,131 @@
 #!/usr/bin/python
 
-import logging
-
 import requests, json, urllib2, csv
 import time, datetime
 import gzip, sys, os, getopt
 import random
 
-logger = logging.getLogger('')
-logger.setLevel(logging.INFO)
-format = logging.Formatter("%(asctime)s [%(relativeCreated)12d] - %(message)s")
-
-argv0=os.path.basename(sys.argv[0 ])
-ch = logging.StreamHandler(sys.stdout)
-ch2 = logging.FileHandler('log/'+datetime.datetime.utcnow().strftime('%Y%m%d%H%M%S')+'_'+argv0+'.log')
-ch.setFormatter(format)
-ch2.setFormatter(format)
-logger.addHandler(ch)
-logger.addHandler(ch2)
-
-logger.info('Hello you!')
-
-try:
-  logger.debug ('Depth by param')
-  loopDeep=int(sys.argv[1])
-except:
-  logger.debug ('Depth by default')
-  loopDeep=5
-logger.info ('Depth: '+str(loopDeep))
-if loopDeep < 0: logger.info ('Going from genesis onwards!')
-
-
-try:
-  appendFlag=sys.argv[2][-1]
-except:
-  appendFlag='w'
-logger.info ('Writing file in mode '+appendFlag)
+import myGlobals
+import _Params
 
 sys.path.append( "functions" )
 sys.path.append( "classes" )
 
-from myFunctions import *
-from blockClass import *
-from addrClass import *
-from transactionClass import *
-from blockChainClass import *
-from transaction2blockClass import *
+import myLogger
+import myApiCalls
+import blockHandling
 
-myBlock = blockClass()
-myAddr = addrClass()
-myTransaction = transactionClass()
-myBlockChain = blockChainClass()
-myTransaction2block = transaction2blockClass ()
 
-epochTime = int(time.time())
 # File list
-fileWriteList=[('addresses_nodes',myAddr),('blocks_nodes',myBlock),('transactions_rels',myTransaction),('blockchain_rels',myBlockChain),('transaction2block_rels',myTransaction2block)]
-
-outputFileDir = 'output/'#+str(epochTime)
-if not os.path.exists(outputFileDir):
-    os.makedirs(outputFileDir)
-
-
-myHeaderFile = {}
-myDataFile = {}
-# I open files here, so in case something is locking them, i won't waste elaboration
-# that will eventually break
-for thisFileName, thisCollection in fileWriteList:
-  # Header files
-  myHeaderFile[thisFileName] = open(outputFileDir + thisFileName + '.csv.header', 'w')
-  # Data files
-  myDataFile[thisFileName] = gzip.open(outputFileDir + thisFileName + '.csv.gz', appendFlag+'b')
+fileWriteList=[ ('addresses.nodes',         myGlobals.myAddr)
+               ,('blocks.nodes',            myGlobals.myBlock)
+               ,('transactions.rels',       myGlobals.myTransaction)
+               ,('blockchain.rels',         myGlobals.myBlockChain)
+               ,('transaction2block.rels',  myGlobals.myTransaction2block)
+              ]
 
 
-soFar=0
+def main(argv):
 
-# Negative depth meand "from genesis forward"
-if loopDeep > 0:
-  latestBlockHash = getLatestBlock()
-else:
-  loopDeep = abs(loopDeep)
-  latestBlockHash = getOldestBlock(loopDeep-1)
+  myLogger.startLogger ()
+  myGlobals.logger.info('Hello you!')
 
 
-for thisBlock in range (0, loopDeep):
-  soFar=soFar+1
-  logger.info('Starting block '+str(soFar)+'/'+str(loopDeep))
+  try:
+    startHeight=int(sys.argv[1])
+    myGlobals.logger.info ('Starting at height: '+str(startHeight))
+  except:
+    startHeight = 0
+    myGlobals.logger.debug ('Start height by default: '+str(startHeight))
 
-  jsonBlockAnswer=getJsonBlock(latestBlockHash)
-
-  logger.debug ('BLOCK HASH -> '+jsonBlockAnswer["hash"])
-  logger.debug ('PREV BLOCK HASH -> '+jsonBlockAnswer["prev_block"])
-
-  # BLOCK node handling
-  myBlock.add(jsonBlockAnswer["hash"], jsonBlockAnswer["time"])
-
-  # Not to loose last elaborated blockTo for blockChain relation
-  if thisBlock == (loopDeep-1):
-    myBlock.add(jsonBlockAnswer["prev_block"], 0)
-
-  # BLOCKCHAIN relations handling
-  myBlockChain.add(p_blockFrom = jsonBlockAnswer["hash"], p_blockTo = jsonBlockAnswer["prev_block"])
+  try:
+    endHeight=int(sys.argv[2])
+    myGlobals.logger.info ('Ending at height: '+str(endHeight))
+  except:
+    endHeight = 499077
+    myGlobals.logger.debug ('End height by default: '+str(endHeight))
 
 
-  # TRANSACTION node handling
-  # Default address for exceptions
-  myAddr.add('--ERR--')
-  transNum=0
-  for transList in jsonBlockAnswer["tx"]:
-    logger.debug ('TRANS HASH -> '+ transList["hash"])
-    logger.debug ('TIME -> '+ str(transList["time"]))
-    for transInput in transList["inputs"]:
-      if transNum==0 :
-        transFrom='miner'
-      else:
-        try:
-          transFrom=transInput["prev_out"]["addr"]
-          myAddr.add(transFrom)
-        except: transFrom='--ERR--'
-      logger.debug ('IN -> '+transFrom)
+  epochTime = int(time.time())
+
+  outputFileDir = 'output/'
+  if not os.path.exists(outputFileDir):
+      os.makedirs(outputFileDir)
 
 
-    for transOut in transList["out"]:
-      try:
-        transTo=transOut["addr"]
-        logger.debug ('OUT -> '+str(transTo))
-        myAddr.add(transTo)
-      except: transTo='--ERR--'
-      transVal=transOut["value"]
-      transSpent=transOut["spent"]
-      logger.debug ('VAL -> '+str(transVal))
+  myHeaderFile = {}
+  myDataFile = {}
 
-    transNum=transNum+1
-    myTransaction.add(transFrom, transTo, transList["hash"], transVal, transSpent, jsonBlockAnswer["hash"], transList["time"])
-
-    # TRANSACTION2BLOCK relatins handling
-    myTransaction2block.add(transFrom, jsonBlockAnswer["hash"])
-    logger.debug ('--------------------')
-
-  # Check if reached genesis block
-  if jsonBlockAnswer["prev_block"] == '0000000000000000000000000000000000000000000000000000000000000000':
-    logger.info('Reached GENESIS block')
-
-    # Check if i added genesis block before...
-    if thisBlock != (loopDeep-1):
-      myBlock.add(jsonBlockAnswer["prev_block"], 0)
-
-    # Nothing before Genesis
-    break
-
-  # Altro giro, altra corsa
-  latestBlockHash = jsonBlockAnswer["prev_block"]
+  # I open files here, so in case something is locking them, i won't waste elaboration
+  # that will eventually break
+  for thisFileName, thisCollection in fileWriteList:
+    # Header files
+    myHeaderFile[thisFileName] = open(outputFileDir + thisFileName + '.csv.header', 'w')
+    # Data files
+    myDataFile[thisFileName] = gzip.open(outputFileDir + thisFileName + '.csv.gz', 'wb')
 
 
-# Write it down now! :-)
-for thisFileName, thisCollection in fileWriteList:
+  soFar=0
+  spooledCounter = 0
+  headerPrinted = 0
+  for thisHeight in range (startHeight, endHeight+1):
+    soFar=soFar+1
+    spooledCounter=spooledCounter+1
 
-  # Data files
-  logger.info('Now spooling '+thisFileName+'.csv.gz')
-  wr = csv.writer(myDataFile[thisFileName], quoting=csv.QUOTE_ALL)
-  for row in thisCollection.elemList:
-    wr.writerow(row.values())
-  myDataFile[thisFileName].close()
+    myGlobals.logger.info('Going for height ' +str(thisHeight)+ ' - '+str(soFar)+'/'+str(endHeight-startHeight+1))
+    blockHash = blockHandling.getBlockByHeight(thisHeight)
+    blockHandling.handleBlock (blockHash)
 
-  # Header files
-  wr = csv.writer(myHeaderFile[thisFileName], quoting=csv.QUOTE_ALL)
-  wr.writerow(thisCollection.elemList[0].keys())
-  myHeaderFile[thisFileName].close()
+    if spooledCounter == _Params.spoolEvery:
+
+      # Write it down now! :-)
+      myGlobals.logger.info('Now spooling files')
+      for thisFileName, thisCollection in fileWriteList:
+
+        # Header files
+        if headerPrinted == 0:
+          wr = csv.writer(myHeaderFile[thisFileName], quoting=csv.QUOTE_ALL)
+          wr.writerow(thisCollection.elemList[0].keys())
+          myHeaderFile[thisFileName].close()
+
+        # Data files
+        myGlobals.logger.debug('Now spooling '+thisFileName+'.csv.gz')
+        wr = csv.writer(myDataFile[thisFileName], quoting=csv.QUOTE_ALL)
+        for row in thisCollection.elemList:
+          wr.writerow(row.values())
+        thisCollection.elemList=[]
+
+      spooledCounter = 0
+      headerPrinted = 1
 
 
 
-logger.info("That's all folks!")
+  # Write it down now! :-)
+  myGlobals.logger.info('Now spooling files')
+  for thisFileName, thisCollection in fileWriteList:
+
+    # Data files
+    myGlobals.logger.debug('Now spooling '+thisFileName+'.csv.gz')
+    wr = csv.writer(myDataFile[thisFileName], quoting=csv.QUOTE_ALL)
+
+    for row in thisCollection.elemList:
+      wr.writerow(row.values())
+    thisCollection.elemList=[]
+
+
+
+
+
+
+
+
+
+
+
+
+
+  myGlobals.logger.info("That's all folks!")
+
+
+if __name__ == "__main__":
+    main(sys.argv)
