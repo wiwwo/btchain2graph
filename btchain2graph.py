@@ -45,13 +45,18 @@ from blockClass import *
 from addrClass import *
 from transactionClass import *
 from blockChainClass import *
+from transaction2blockClass import *
 
 myBlock = blockClass()
 myAddr = addrClass()
 myTransaction = transactionClass()
 myBlockChain = blockChainClass()
+myTransaction2block = transaction2blockClass ()
 
-fileWriteList=[('addresses_nodes',myAddr),('blocks_nodes',myBlock),('transactions_rels',myTransaction),('blockchain_rels',myBlockChain)]
+
+# File list
+fileWriteList=[('addresses_nodes',myAddr),('blocks_nodes',myBlock),('transactions_rels',myTransaction),('blockchain_rels',myBlockChain),('transaction2block_rels',myTransaction2block)]
+
 
 # I open files here, so in case something is locking them, i won't waste elaboration
 # that will eventually break
@@ -119,6 +124,9 @@ for thisBlock in range (0, loopDeep):
 
     transNum=transNum+1
     myTransaction.add(transFrom, transTo, transList["hash"], transVal, transSpent, jsonBlockAnswer["hash"], transList["time"])
+
+    # TRANSACTION2BLOCK relatins handling
+    myTransaction2block.add(transFrom, jsonBlockAnswer["hash"])
     logger.debug ('--------------------')
 
   # Check if reached genesis block
