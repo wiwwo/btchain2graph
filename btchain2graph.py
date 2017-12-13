@@ -62,9 +62,9 @@ fileWriteList=[('addresses_nodes',myAddr),('blocks_nodes',myBlock),('transaction
 # that will eventually break
 for thisFileName, thisCollection in fileWriteList:
   # Header files
-  with open('output/'+thisFileName+'.csv.header', 'w') as myfile: myfile.close()
+  myHeaderFile = open('output/'+thisFileName+'.csv.header', 'w')
   # Data files
-  with gzip.open('output/'+thisFileName+'.csv.gz', appendFlag+'b') as myfile: myfile.close()
+  myDataFile = gzip.open('output/'+thisFileName+'.csv.gz', appendFlag+'b')
 
 
 soFar=0
@@ -143,26 +143,25 @@ for thisBlock in range (0, loopDeep):
     # Nothing before Genesis
     break
 
-  # Alro giro, altra corsa
+  # Altro giro, altra corsa
   latestBlockHash = jsonBlockAnswer["prev_block"]
 
 
 # Write it down now! :-)
 for thisFileName, thisCollection in fileWriteList:
 
-  # Header files
-  with open('output/'+thisFileName+'.csv.header', 'w') as myfile:
-    wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
-    wr.writerow(thisCollection.elemList[0].keys())
-
   # Data files
-  with gzip.open('output/'+thisFileName+'.csv.gz', appendFlag+'b') as myfile:
-    logger.info('Now spooling '+thisFileName+'.csv.gz')
-    wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
-    #if appendFlag == 'w': wr.writerow(thisCollection.elemList[0].keys())
-    for row in thisCollection.elemList:
-      wr.writerow(row.values())
-    myfile.close()
+  logger.info('Now spooling '+thisFileName+'.csv.gz')
+  wr = csv.writer(myDataFile, quoting=csv.QUOTE_ALL)
+  for row in thisCollection.elemList:
+    wr.writerow(row.values())
+  myDataFile.close()
+
+  # Header files
+  wr = csv.writer(myHeaderFile, quoting=csv.QUOTE_ALL)
+  wr.writerow(thisCollection.elemList[0].keys())
+  myHeaderFile.close()
+
 
 
 logger.info("That's all folks!")
