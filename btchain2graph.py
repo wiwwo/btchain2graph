@@ -53,18 +53,24 @@ myTransaction = transactionClass()
 myBlockChain = blockChainClass()
 myTransaction2block = transaction2blockClass ()
 
-
+epochTime = int(time.time())
 # File list
 fileWriteList=[('addresses_nodes',myAddr),('blocks_nodes',myBlock),('transactions_rels',myTransaction),('blockchain_rels',myBlockChain),('transaction2block_rels',myTransaction2block)]
 
+outputFileDir = 'output/'#+str(epochTime)
+if not os.path.exists(outputFileDir):
+    os.makedirs(outputFileDir)
 
+
+myHeaderFile = {}
+myDataFile = {}
 # I open files here, so in case something is locking them, i won't waste elaboration
 # that will eventually break
 for thisFileName, thisCollection in fileWriteList:
   # Header files
-  myHeaderFile = open('output/'+thisFileName+'.csv.header', 'w')
+  myHeaderFile[thisFileName] = open(outputFileDir + thisFileName + '.csv.header', 'w')
   # Data files
-  myDataFile = gzip.open('output/'+thisFileName+'.csv.gz', appendFlag+'b')
+  myDataFile[thisFileName] = gzip.open(outputFileDir + thisFileName + '.csv.gz', appendFlag+'b')
 
 
 soFar=0
@@ -152,15 +158,15 @@ for thisFileName, thisCollection in fileWriteList:
 
   # Data files
   logger.info('Now spooling '+thisFileName+'.csv.gz')
-  wr = csv.writer(myDataFile, quoting=csv.QUOTE_ALL)
+  wr = csv.writer(myDataFile[thisFileName], quoting=csv.QUOTE_ALL)
   for row in thisCollection.elemList:
     wr.writerow(row.values())
-  myDataFile.close()
+  myDataFile[thisFileName].close()
 
   # Header files
-  wr = csv.writer(myHeaderFile, quoting=csv.QUOTE_ALL)
+  wr = csv.writer(myHeaderFile[thisFileName], quoting=csv.QUOTE_ALL)
   wr.writerow(thisCollection.elemList[0].keys())
-  myHeaderFile.close()
+  myHeaderFile[thisFileName].close()
 
 
 
