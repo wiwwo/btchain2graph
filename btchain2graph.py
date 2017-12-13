@@ -62,7 +62,7 @@ def main(argv):
     # Header files
     myHeaderFile[thisFileName] = open(outputFileDir + thisFileName + '.csv.header', 'w')
     # Data files
-    myDataFile[thisFileName] = gzip.open(outputFileDir + thisFileName + '.csv.gz', 'wb')
+    myDataFile[thisFileName] = gzip.open(filename=outputFileDir + thisFileName + '.csv.gz', mode='wb', compresslevel=_Params.compressionLevel)
 
 
   soFar=0
