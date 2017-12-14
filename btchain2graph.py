@@ -19,9 +19,9 @@ import blockHandling
 # File list
 fileWriteList=[ ('addresses.nodes',         myGlobals.myAddr)
                ,('blocks.nodes',            myGlobals.myBlock)
-               ,('transactions.rels',       myGlobals.myTransaction)
-               ,('blockchain.rels',         myGlobals.myBlockChain)
-               ,('transaction2block.rels',  myGlobals.myTransaction2block)
+               ,('transactions.relationships',       myGlobals.myTransaction)
+               ,('blockchain.relationships',         myGlobals.myBlockChain)
+               ,('transaction2block.relationships',  myGlobals.myTransaction2block)
               ]
 
 
