@@ -43,7 +43,7 @@ def main(argv):
     endHeight=int(sys.argv[2])
   except:
     endHeight = blockHandling.getLatestBlockHeight()
-  myGlobals.logger.info ('End height  : '+str(endHeight))
+  myGlobals.logger.info ('End   height: '+str(endHeight))
 
 
   epochTime = int(time.time())
@@ -69,12 +69,14 @@ def main(argv):
 
   listFile = open(outputFileDir + '_execution-'+str(epochTime)+'.log', 'w')
 
+
   for thisHeight in range (startHeight, endHeight+1):
     blocksSoFar=blocksSoFar+1
     spooledCounter=spooledCounter+1
 
     strLenTotal=len(str(endHeight-startHeight+1))
-    myGlobals.logger.info('Going for height %07d - %0'+str(strLenTotal)+'d/%0'+str(strLenTotal)+'d', thisHeight, blocksSoFar, endHeight-startHeight+1)
+    myGlobals.logger.debug('Going for height %07d - %0'+str(strLenTotal)+'d/%0'+str(strLenTotal)+'d', thisHeight, blocksSoFar, endHeight-startHeight+1)
+
 
     blockHash = blockHandling.getBlockByHeight(thisHeight)
     blockWithErrNode = blockHandling.handleBlock (blockHash)
@@ -90,7 +92,7 @@ def main(argv):
 
     if spooledCounter == _Params.spoolEvery:
       # Data files
-      myGlobals.logger.info('Now spooling files')
+      myGlobals.logger.info('Now spooling files - done so far: '+str(blocksSoFar))
       for thisFileName, thisCollection in fileWriteList:
         myGlobals.logger.debug('Now spooling '+thisFileName+'.csv.gz')
         wr = csv.writer(myDataFile[thisFileName], quoting=csv.QUOTE_ALL)
