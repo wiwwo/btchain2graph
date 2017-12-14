@@ -20,14 +20,14 @@ IMPORT_PARAMS=" --id-type string --skip-bad-relationships=false "
 executeMe="sudo neo4j-import --into $DB_DEST_DIR $IMPORT_PARAMS "
 
 
-for myFile in $DB_SOURCE_DIR/*_nodes.csv.gz
+for myFile in $DB_SOURCE_DIR/*.nodes.csv.gz
 do
   myHeaderfile=`echo ${myFile/.gz/.header}`
   echo $myHeaderfile
   executeMe="$executeMe --nodes $myHeaderfile,$myFile"
 done
 
-for myFile in $DB_SOURCE_DIR/*_rels.csv.gz
+for myFile in $DB_SOURCE_DIR/*.rels.csv.gz
 do
   myHeaderfile=`echo "${myFile/.gz/.header}"`
   executeMe="$executeMe --relationships $myHeaderfile,$myFile"
