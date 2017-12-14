@@ -102,6 +102,7 @@ def main(argv):
         thisCollection.elemList=[]
 
       spooledCounter = 0
+      listFile.flush()
 
     listFile.write('%d\t%07d\t%d\n' % (int(time.time()), thisHeight, blockWithErrNode))
 
