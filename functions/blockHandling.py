@@ -38,6 +38,7 @@ def handleBlock (p_block):
 
   # TRANSACTION node handling
   # Default address for exceptions
+  myGlobals.myAddr.add('miner')
   myGlobals.myAddr.add('--ERR--')
   transNum=0
   for transList in jsonBlockAnswer["tx"]:
