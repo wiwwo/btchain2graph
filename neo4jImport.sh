@@ -45,8 +45,8 @@ done
 #  executeMe="$executeMe --relationships $myHeaderfile,$myFile"
 #done
 
-nodeFilesCnt=`ls $DB_SOURCE_DIR/*_nodes.csv.gz | wc -l`
-relFilesCnt=`ls $DB_SOURCE_DIR/*_rels.csv.gz | wc -l`
+nodeFilesCnt=`ls $DB_SOURCE_DIR/*.nodes.csv.gz | wc -l`
+relFilesCnt=`ls $DB_SOURCE_DIR/*.relationships.csv.gz | wc -l`
 
 echoi Executing import
 echoi " "Source CSV files in $DB_SOURCE_DIR
