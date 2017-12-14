@@ -65,10 +65,9 @@ def main(argv):
     myDataFile[thisFileName] = gzip.open(filename=outputFileDir + thisFileName + '.csv.gz', mode='wb', compresslevel=_Params.compressionLevel)
 
 
-  blocksSoFar=0
-  spooledCounter = 0
+  blocksSoFar=spooledCounter=blockWithErrNode = 0
 
-  listFile = open(outputFileDir + 'execution-'+str(epochTime)+'.log', 'w')
+  listFile = open(outputFileDir + '_execution-'+str(epochTime)+'.log', 'w')
 
   for thisHeight in range (startHeight, endHeight+1):
     blocksSoFar=blocksSoFar+1
@@ -78,7 +77,7 @@ def main(argv):
     myGlobals.logger.info('Going for height %07d - %0'+str(strLenTotal)+'d/%0'+str(strLenTotal)+'d', thisHeight, blocksSoFar, endHeight-startHeight+1)
 
     blockHash = blockHandling.getBlockByHeight(thisHeight)
-    blockHandling.handleBlock (blockHash)
+    blockWithErrNode = blockHandling.handleBlock (blockHash)
 
     if blocksSoFar == 1:
       # Header files
@@ -101,7 +100,7 @@ def main(argv):
 
       spooledCounter = 0
 
-    listFile.write(str(thisHeight)+'\n')
+    listFile.write('%d\t%07d\t%d\n' % (int(time.time()), thisHeight, blockWithErrNode))
 
 
   # Write it down now! :-)

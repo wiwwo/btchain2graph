@@ -20,6 +20,8 @@ import myGlobals, myLogger
 ####################################################################
 def handleBlock (p_block):
 
+  errNodeFound = 0
+
   myGlobals.logger.debug('Starting block ' + p_block)
 
   jsonBlockAnswer=getJsonBlock(p_block)
@@ -51,7 +53,9 @@ def handleBlock (p_block):
         try:
           transFrom=transInput["prev_out"]["addr"]
           myGlobals.myAddr.add(transFrom)
-        except: transFrom='--ERR--'
+        except:
+          transFrom='--ERR--'
+          errNodeFound = 1
       myGlobals.logger.debug ('IN -> '+transFrom)
 
 
@@ -60,7 +64,9 @@ def handleBlock (p_block):
         transTo=transOut["addr"]
         myGlobals.logger.debug ('OUT -> '+str(transTo))
         myGlobals.myAddr.add(transTo)
-      except: transTo='--ERR--'
+      except:
+        transTo='--ERR--'
+        errNodeFound = 1
       transVal=transOut["value"]
       transSpent=transOut["spent"]
       myGlobals.logger.debug ('VAL -> '+str(transVal))
@@ -71,4 +77,5 @@ def handleBlock (p_block):
     # TRANSACTION2BLOCK relatins handling
     myGlobals.myTransaction2block.add(transFrom, jsonBlockAnswer["hash"])
     myGlobals.logger.debug ('--------------------')
+    return errNodeFound
 
