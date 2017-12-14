@@ -1,9 +1,12 @@
 import requests, json, urllib2
+import random
+from retrying import retry
 
 global logger
 
 
 ####################################################################
+@retry(wait_random_min=3000, wait_random_max=5000, stop_max_attempt_number=7)
 def getLatestBlockHash():
   latestBlockUrl="https://blockchain.info/latestblock"
 
@@ -16,6 +19,7 @@ def getLatestBlockHash():
 
 
 ####################################################################
+@retry(wait_random_min=3000, wait_random_max=5000, stop_max_attempt_number=7)
 def getLatestBlockHeight():
   latestBlockUrl="https://blockchain.info/latestblock"
 
@@ -28,6 +32,7 @@ def getLatestBlockHeight():
 
 
 ####################################################################
+@retry(wait_random_min=3000, wait_random_max=5000, stop_max_attempt_number=7)
 def getJsonBlock(p_block):
   rawBlockUrl="https://blockchain.info/rawblock/"
 
@@ -38,6 +43,7 @@ def getJsonBlock(p_block):
 
 
 ####################################################################
+@retry(wait_random_min=3000, wait_random_max=5000, stop_max_attempt_number=7)
 def getBlockByHeight(p_height):
   blockUrl="https://blockchain.info/block-height/"+ str(p_height) +"?format=json"
 

@@ -1,8 +1,5 @@
-import logging
-
-import requests, json, urllib2, csv
+import requests, json
 import time, datetime
-import gzip, sys, os, getopt
 import random
 
 
