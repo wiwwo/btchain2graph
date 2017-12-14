@@ -100,6 +100,7 @@ def main(argv):
   for thisFileName, thisCollection in fileWriteList:
 
     # Header files
+    myGlobals.logger.debug('Now spooling '+thisFileName+'.csv.header')
     wr = csv.writer(myHeaderFile[thisFileName], quoting=csv.QUOTE_ALL)
     wr.writerow(thisCollection.elemList[0].keys())
     myHeaderFile[thisFileName].close()
