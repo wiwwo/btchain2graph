@@ -1,5 +1,5 @@
 #!/bin/bash
-set +x
+set 6x
 
 
 shopt -s expand_aliases
@@ -16,22 +16,34 @@ export NEO4J_LOG_FILE=/var/log/neo4j/debug.log
 
 #############################################################################################################
 ### Import
-IMPORT_PARAMS=" --id-type string --skip-bad-relationships=false "
+IMPORT_PARAMS=" --id-type string --skip-bad-relationships=false --skip-duplicate-nodes=true "
 executeMe="sudo neo4j-import --into $DB_DEST_DIR $IMPORT_PARAMS "
 
 
-for myFile in $DB_SOURCE_DIR/*.nodes.csv.gz
-do
-  myHeaderfile=`echo ${myFile/.gz/.header}`
-  echo $myHeaderfile
-  executeMe="$executeMe --nodes $myHeaderfile,$myFile"
+cd $DB_SOURCE_DIR
+for type in 'nodes' 'relationships'; do
+  for thisHeaderfile in `ls *$type*.header`;do
+    thisDataFileTemplate=`echo ${thisHeaderfile/.header/}`
+    executeMe="$executeMe --$type $DB_SOURCE_DIR/$thisHeaderfile"
+    for thisDataFile in `ls *$thisDataFileTemplate`; do
+      executeMe="$executeMe,$DB_SOURCE_DIR/$thisDataFile"
+    done
+  done
 done
 
-for myFile in $DB_SOURCE_DIR/*.rels.csv.gz
-do
-  myHeaderfile=`echo "${myFile/.gz/.header}"`
-  executeMe="$executeMe --relationships $myHeaderfile,$myFile"
-done
+#for myFile in $DB_SOURCE_DIR/*.nodes.csv.gz
+#do
+#  myHeaderfile=`echo ${myFile/.gz/.header}`
+#  myHeaderfile=`dirname $myHeaderfile`/`basename $myHeaderfile  | cut -d. -f2,3,4,5`
+#  executeMe="$executeMe --nodes $myHeaderfile,$myFile"
+#done
+#
+#for myFile in $DB_SOURCE_DIR/*.rels.csv.gz
+#do
+#  myHeaderfile=`echo "${myFile/.gz/.header}"`
+#  myHeaderfile=`dirname $myHeaderfile`/`basename $myHeaderfile  | cut -d. -f2,3,4,5`
+#  executeMe="$executeMe --relationships $myHeaderfile,$myFile"
+#done
 
 nodeFilesCnt=`ls $DB_SOURCE_DIR/*_nodes.csv.gz | wc -l`
 relFilesCnt=`ls $DB_SOURCE_DIR/*_rels.csv.gz | wc -l`
