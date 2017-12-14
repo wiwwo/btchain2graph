@@ -33,17 +33,15 @@ def main(argv):
 
   try:
     startHeight=int(sys.argv[1])
-    myGlobals.logger.info ('Starting at height: '+str(startHeight))
   except:
     startHeight = 0
-    myGlobals.logger.debug ('Start height by default: '+str(startHeight))
+  myGlobals.logger.info ('Start height: '+str(startHeight))
 
   try:
     endHeight=int(sys.argv[2])
-    myGlobals.logger.info ('Ending at height: '+str(endHeight))
   except:
-    endHeight = 499077
-    myGlobals.logger.debug ('End height by default: '+str(endHeight))
+    endHeight = blockHandling.getLatestBlockHeight()
+  myGlobals.logger.info ('End height  : '+str(endHeight))
 
 
   epochTime = int(time.time())
