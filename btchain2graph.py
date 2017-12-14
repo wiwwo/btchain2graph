@@ -60,7 +60,7 @@ def main(argv):
   # that will eventually break
   for thisFileName, thisCollection in fileWriteList:
     # Header files
-    myHeaderFile[thisFileName] = open(outputFileDir + thisFileName + '.csv.header', 'w')
+    myHeaderFile[thisFileName] = open(outputFileDir + thisFileName + '.csv.gz.header', 'w')
     # Data files
     #myDataFile[thisFileName] = gzip.open(filename=outputFileDir + thisFileName + '.csv.gz', mode='wb', compresslevel=_Params.compressionLevel)
     myDataFile[thisFileName] = gzip.open(filename=('%s%07d-%07d.%s.csv.gz' % (outputFileDir, startHeight, endHeight, thisFileName)), mode='wb', compresslevel=_Params.compressionLevel)
