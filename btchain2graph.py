@@ -62,7 +62,8 @@ def main(argv):
     # Header files
     myHeaderFile[thisFileName] = open(outputFileDir + thisFileName + '.csv.header', 'w')
     # Data files
-    myDataFile[thisFileName] = gzip.open(filename=outputFileDir + thisFileName + '.csv.gz', mode='wb', compresslevel=_Params.compressionLevel)
+    #myDataFile[thisFileName] = gzip.open(filename=outputFileDir + thisFileName + '.csv.gz', mode='wb', compresslevel=_Params.compressionLevel)
+    myDataFile[thisFileName] = gzip.open(filename=('%s%07d-%07d.%s.csv.gz' % (outputFileDir, startHeight, endHeight, thisFileName)), mode='wb', compresslevel=_Params.compressionLevel)
 
 
   blocksSoFar=spooledCounter=blockWithErrNode = 0
