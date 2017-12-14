@@ -76,8 +76,15 @@ def main(argv):
     blockHash = blockHandling.getBlockByHeight(thisHeight)
     blockHandling.handleBlock (blockHash)
 
-    if spooledCounter == _Params.spoolEvery:
+    if soFar == 1:
+      # Header files
+      for thisFileName, thisCollection in fileWriteList:
+        myGlobals.logger.debug('Now spooling '+thisFileName+'.csv.header')
+        wr = csv.writer(myHeaderFile[thisFileName], quoting=csv.QUOTE_ALL)
+        wr.writerow(thisCollection.elemList[0].keys())
+        myHeaderFile[thisFileName].close()
 
+    if spooledCounter == _Params.spoolEvery:
       # Write it down now! :-)
       myGlobals.logger.info('Now spooling files')
       for thisFileName, thisCollection in fileWriteList:
@@ -96,12 +103,6 @@ def main(argv):
   # Write it down now! :-)
   myGlobals.logger.info('Now spooling files')
   for thisFileName, thisCollection in fileWriteList:
-
-    # Header files
-    myGlobals.logger.debug('Now spooling '+thisFileName+'.csv.header')
-    wr = csv.writer(myHeaderFile[thisFileName], quoting=csv.QUOTE_ALL)
-    wr.writerow(thisCollection.elemList[0].keys())
-    myHeaderFile[thisFileName].close()
 
     # Data files
     myGlobals.logger.debug('Now spooling '+thisFileName+'.csv.gz')
