@@ -67,7 +67,6 @@ def main(argv):
 
   soFar=0
   spooledCounter = 0
-  headerPrinted = 0
 
   for thisHeight in range (startHeight, endHeight+1):
     soFar=soFar+1
@@ -85,12 +84,6 @@ def main(argv):
       myGlobals.logger.info('Now spooling files')
       for thisFileName, thisCollection in fileWriteList:
 
-        # Header files
-        if headerPrinted == 0:
-          wr = csv.writer(myHeaderFile[thisFileName], quoting=csv.QUOTE_ALL)
-          wr.writerow(thisCollection.elemList[0].keys())
-          myHeaderFile[thisFileName].close()
-
         # Data files
         myGlobals.logger.debug('Now spooling '+thisFileName+'.csv.gz')
         wr = csv.writer(myDataFile[thisFileName], quoting=csv.QUOTE_ALL)
@@ -99,13 +92,17 @@ def main(argv):
         thisCollection.elemList=[]
 
       spooledCounter = 0
-      headerPrinted = 1
 
 
 
   # Write it down now! :-)
   myGlobals.logger.info('Now spooling files')
   for thisFileName, thisCollection in fileWriteList:
+
+    # Header files
+    wr = csv.writer(myHeaderFile[thisFileName], quoting=csv.QUOTE_ALL)
+    wr.writerow(thisCollection.elemList[0].keys())
+    myHeaderFile[thisFileName].close()
 
     # Data files
     myGlobals.logger.debug('Now spooling '+thisFileName+'.csv.gz')
