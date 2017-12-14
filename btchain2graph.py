@@ -84,12 +84,11 @@ def main(argv):
         wr.writerow(thisCollection.elemList[0].keys())
         myHeaderFile[thisFileName].close()
 
+
     if spooledCounter == _Params.spoolEvery:
-      # Write it down now! :-)
+      # Data files
       myGlobals.logger.info('Now spooling files')
       for thisFileName, thisCollection in fileWriteList:
-
-        # Data files
         myGlobals.logger.debug('Now spooling '+thisFileName+'.csv.gz')
         wr = csv.writer(myDataFile[thisFileName], quoting=csv.QUOTE_ALL)
         for row in thisCollection.elemList:
@@ -111,6 +110,7 @@ def main(argv):
     for row in thisCollection.elemList:
       wr.writerow(row.values())
     thisCollection.elemList=[]
+    myDataFile[thisFileName].close()
 
 
 
