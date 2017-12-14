@@ -27,6 +27,8 @@ fileWriteList=[ ('addresses.nodes',         myGlobals.myAddr)
 
 def main(argv):
 
+  epochTime = int(time.time())
+
   myLogger.startLogger ()
   myGlobals.logger.info('Hello you!')
 
@@ -63,20 +65,22 @@ def main(argv):
     myDataFile[thisFileName] = gzip.open(filename=outputFileDir + thisFileName + '.csv.gz', mode='wb', compresslevel=_Params.compressionLevel)
 
 
-  soFar=0
+  blocksSoFar=0
   spooledCounter = 0
 
+  listFile = open(outputFileDir + 'execution-'+str(epochTime)+'.log', 'w')
+
   for thisHeight in range (startHeight, endHeight+1):
-    soFar=soFar+1
+    blocksSoFar=blocksSoFar+1
     spooledCounter=spooledCounter+1
 
     strLenTotal=len(str(endHeight-startHeight+1))
-    myGlobals.logger.info('Going for height %07d - %0'+str(strLenTotal)+'d/%0'+str(strLenTotal)+'d', thisHeight, soFar, endHeight-startHeight+1)
+    myGlobals.logger.info('Going for height %07d - %0'+str(strLenTotal)+'d/%0'+str(strLenTotal)+'d', thisHeight, blocksSoFar, endHeight-startHeight+1)
 
     blockHash = blockHandling.getBlockByHeight(thisHeight)
     blockHandling.handleBlock (blockHash)
 
-    if soFar == 1:
+    if blocksSoFar == 1:
       # Header files
       for thisFileName, thisCollection in fileWriteList:
         myGlobals.logger.debug('Now spooling '+thisFileName+'.csv.header')
@@ -97,6 +101,7 @@ def main(argv):
 
       spooledCounter = 0
 
+    listFile.write(str(thisHeight)+'\n')
 
 
   # Write it down now! :-)
@@ -113,7 +118,7 @@ def main(argv):
     myDataFile[thisFileName].close()
 
 
-
+  listFile.close()
   myGlobals.logger.info("That's all folks!")
 
 
