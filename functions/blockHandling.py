@@ -29,8 +29,8 @@ def handleBlock (p_block):
 
   # BLOCK node handling
   if jsonBlockAnswer["prev_block"] == '0000000000000000000000000000000000000000000000000000000000000000':
-    myGlobals.myBlock.add('0000000000000000000000000000000000000000000000000000000000000000', '0')
-  myGlobals.myBlock.add(jsonBlockAnswer["hash"], jsonBlockAnswer["time"])
+    myGlobals.myBlock.add('0000000000000000000000000000000000000000000000000000000000000000', '0', '0')
+  myGlobals.myBlock.add(jsonBlockAnswer["hash"], jsonBlockAnswer["height"], jsonBlockAnswer["time"])
 
   # BLOCKCHAIN relations handling
   myGlobals.myBlockChain.add(p_blockFrom = jsonBlockAnswer["hash"], p_blockTo = jsonBlockAnswer["prev_block"])
