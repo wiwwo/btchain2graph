@@ -11,8 +11,8 @@ import _Params
 sys.path.append( "functions" )
 sys.path.append( "classes" )
 
-import myLogger
-import myApiCalls
+import logHandling
+import extDataSources
 import blockHandling
 
 
@@ -29,7 +29,7 @@ def main(argv):
 
   epochTime = int(time.time())
 
-  myLogger.startLogger ()
+  logHandling.startLogger ()
   myGlobals.logger.info('Hello you!')
 
 

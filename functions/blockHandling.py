@@ -3,7 +3,7 @@ import time, datetime
 import random
 
 
-from myApiCalls import *
+from extDataSources import *
 
 from blockClass import *
 from addrClass import *
@@ -11,7 +11,7 @@ from transactionClass import *
 from blockChainClass import *
 from transaction2blockClass import *
 
-import myGlobals, myLogger
+import myGlobals, logHandling
 
 
 ####################################################################
